@@ -3,13 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <title>Game Project</title>
+    <link href="https://fonts.googleapis.com/css?family=Architects Daughter" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="./stylesheet/style.css">
   </head>
   <body>
+    <h1 id="title">SEAL SIMULATOR</h1>
+    <div id="game"></div>
     <p hidden><img id = "background" src="./images/glacial_mountains_fullcolor_preview.png"></p>
+    <p hidden><img id = "fish" src="./images/fish.png"></p>
     <p hidden><img id = "seal" src="./images/seal.png"></p>
     <p hidden><img id = "killer" src="./images/killer-whale.png"></p>
     <p hidden><img id = "bear" src="./images/bear.png"></p>
+    <p hidden><img id="game-over" src="./images/game-over.jpg"></p>
+    <div id="menu">
+      <div id="commands">
+        <p>A = MOVE LEFT<br> D = MOVE RIGHT<br>SPACE BAR = JUMP</p>
+      </div>
+    <p><button id="btn" class="start">START</button></p>
+    </div>
     <script src="./js/script.js"></script>
   </body>
 </html>

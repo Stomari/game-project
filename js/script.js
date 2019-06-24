@@ -1,11 +1,13 @@
 const gameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
+  points: 0,
   start() {
-    this.canvas.width = 800;
+    this.canvas.width = 1000;
     this.canvas.height = 600;
     this.ctx = this.canvas.getContext('2d');
-    document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    const game = document.getElementById('game')
+    game.insertBefore(this.canvas, game.childNodes[0]);
     this.interval = setInterval(updateGameArea, 1000 / 60);
   },
   drawBoard() {
@@ -19,11 +21,29 @@ const gameArea = {
     grd.addColorStop(0, '#20C3D0');
     grd.addColorStop(1, 'white');
     this.ctx.fillStyle = grd;
-    this.ctx.fillRect(0, 500, 800, 100);
+    this.ctx.fillRect(0, 500, 1000, 100);
     this.ctx.closePath();
   },
   clear() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+  stop() {
+    clearInterval(this.interval);
+  },
+  score() {
+    if (Math.floor(this.frames % 60) === 0) {
+      this.points += 1;
+    }
+    this.ctx.font = '30px Architects Daughter';
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillText(`Score: ${this.points}`, 440, 50);
+  },
+  scoreBonus() {
+    this.points += 10;
+    this.ctx.font = '30px Architects Daughter';
+    this.ctx.fillStyle = 'black';
+    const bonusInterval = setInterval(() => this.ctx.fillText('+10', 460, 80), 1);
+    setTimeout(() => clearInterval(bonusInterval), 2000);
   },
 };
 
@@ -37,11 +57,11 @@ const backgroundImage = {
     this.x %= gameArea.canvas.width;
   },
   draw() {
-    gameArea.ctx.drawImage(this.background, this.x, 0, 800, 600);
+    gameArea.ctx.drawImage(this.background, this.x, 0, 1000, 600);
     if (this.speed < 0) {
-      gameArea.ctx.drawImage(this.background, this.x + gameArea.canvas.width, 0, 800, 600);
+      gameArea.ctx.drawImage(this.background, this.x + gameArea.canvas.width, 0, 1000, 600);
     } else {
-      gameArea.ctx.drawImage(this.background, this.x - this.background.width, 0, 800, 600);
+      gameArea.ctx.drawImage(this.background, this.x - this.background.width, 0, 1000, 600);
     }
   },
 };
@@ -72,11 +92,11 @@ window.addEventListener('keydown', controller.keyListener);
 window.addEventListener('keyup', controller.keyListener);
 
 class Player {
-  constructor(x, y, width, heigth) {
+  constructor(x, y, width, height) {
     this.x = x;
     this.y = y;
     this.width = width;
-    this.height = heigth;
+    this.height = height;
     this.speedX = 0;
     this.speedY = 0;
     this.jumping = true;
@@ -100,7 +120,7 @@ class Player {
   newPos() {
     // jump condition
     if (controller.up && this.jumping === false) {
-      this.speedY -= 70;
+      this.speedY -= 40;
       this.jumping = true;
     }
     if (controller.left) {
@@ -113,7 +133,7 @@ class Player {
 
     this.x += this.speedX;
     this.y += this.speedY;
-    this.speedY += 2.5; // gravity
+    this.speedY += 1.5; // gravity
     this.speedX *= 0.5; // friction
     this.speedY *= 0.9; // friction
 
@@ -128,10 +148,52 @@ class Player {
     if (this.x < 0) {
       this.x = 0;
       this.speedX = 0;
-    } else if (this.x > 800 - this.width) {
-      this.x = 800 - this.width;
+    } else if (this.x > 1000 - this.width) {
+      this.x = 1000 - this.width;
       this.speedX = 0;
     }
+  }
+
+  left() {
+    return this.x + 10;
+  }
+
+  right() {
+    return this.x + this.width - 10;
+  }
+
+  top() {
+    return this.y + 10;
+  }
+
+  bottom() {
+    return this.y + this.height - 10;
+  }
+
+  crashWith(obstacle) {
+    return (
+      this.bottom() > obstacle.top()
+      && this.top() < obstacle.bottom()
+      && this.right() > obstacle.left()
+      && this.left() < obstacle.right()
+    );
+  }
+}
+
+function checkGameOver() {
+  const crashed = myObstacles.some(obstacle => seal.crashWith(obstacle));
+  const crashed2 = myObstacles2.some(obstacle => seal.crashWith(obstacle));
+
+  if (crashed || crashed2) {
+    gameArea.stop();
+    setTimeout(() => {
+      const gameOverImg = document.getElementById('game-over');
+      gameArea.ctx.drawImage(gameOverImg, 0, 0, 1000, 600);
+      gameArea.ctx.font = '100px Architects Daughter';
+      gameArea.ctx.fillStyle = 'black';
+      gameArea.ctx.fillText(`GAME OVER`, 200, 200);
+      gameArea.ctx.fillText(`Score: ${gameArea.points}`, 270, 400);
+    }, 2000);
   }
 }
 
@@ -145,52 +207,94 @@ function updateObstacles() {
     myObstacles[i].updateEnemy();
   }
   gameArea.frames += 1;
-  if (gameArea.frames % Math.round(Math.random() * 2000) === 0) {
-    myObstacles.push(new Player(800, 450, 60, 50));
+  if (gameArea.frames % Math.round(Math.random() * 1000) === 0) {
+    myObstacles.push(new Player(1000, 460, 60, 50));
   }
 }
 
 const myObstacles2 = [];
 
 function updateObstacles2() {
-  for (let i = 0; i < myObstacles.length; i += 1) {
-    myObstacles2[i].y += myObstacles2[i].speedY;
-    myObstacles2[i].x += myObstacles2[i].speedX;
-    if (myObstacles2[i].x === 700) {
-      myObstacles2[i].speedY = -70;
-      myObstacles2[i].speedX = -Math.round(Math.random() * 10);
+  if (myObstacles2.length >= 1) {
+    for (let i = 0; i < myObstacles2.length; i += 1) {
+      myObstacles2[i].y += myObstacles2[i].speedY;
+      myObstacles2[i].x += myObstacles2[i].speedX;
+      if (myObstacles2[i].x === 900) {
+        myObstacles2[i].speedY = -70;
+        myObstacles2[i].speedX = -Math.round(Math.random() * 10);
+      }
+      myObstacles2[i].speedY += 0.5;
+      myObstacles2[i].speedY *= 0.9;
+      myObstacles2[i].updateEnemy2();
     }
-    myObstacles2[i].speedY += 0.5;
-    myObstacles2[i].speedY *= 0.9;
-    myObstacles2[i].updateEnemy2();
   }
-  gameArea.frames += 1;
-  if (gameArea.frames % Math.round(Math.random() * 3000) === 0) {
-    myObstacles2.push(new Player(700, 600, 100, 40));
+  if (gameArea.frames % Math.round(Math.random() * 1000) === 0) {
+    myObstacles2.push(new Player(900, 600, 100, 40));
   }
 }
 
-// document.onkeydown = (e) => {
-//   // eslint-disable-next-line default-case
-//   switch (e.keyCode) {
-//     case 32: // space bar
-//       // jump(?)
-//       seal.jumping = false;
-//       console.log(seal.jumping);
-//       break;
-//     case 65: // a keyboard
-//       seal.speedX = -5;
-//       break;
-//     case 68: // d keyboard
-//       seal.speedX = 5;
-//       break;
-//   }
-// };
+// Bonus points logic
+class Fish extends Player {
+  update() {
+    const fish = document.getElementById('fish');
+    gameArea.ctx.drawImage(fish, this.x, this.y, this.width, this.height);
+  }
 
-// document.onkeyup = (e) => {
-//   seal.speedX = 0;
-// };
+  newPos() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.speedX = -Math.round(Math.random() * 5);
+    if (this.y === 50) {
+      this.speedY = 4;
+    } else if (this.y === 450) {
+      this.speedY = -4;
+    }
+  }
 
+  left() {
+    return this.x;
+  }
+
+  right() {
+    return this.x + this.width;
+  }
+
+  top() {
+    return this.y;
+  }
+
+  bottom() {
+    return this.y + this.height;
+  }
+}
+
+const bonusPoints = [];
+
+const fishes = () => {
+  for (let i = 0; i < bonusPoints.length; i += 1) {
+    bonusPoints[i].newPos();
+    bonusPoints[i].update();
+  }
+  if (gameArea.frames % 240 === 0) {
+    bonusPoints.push(new Fish(1000, 50, 30, 30));
+  }
+};
+
+const checkBonusPoints = () => {
+  let didYouGrab = false;
+  let index = 0;
+  for (let i = 0; i < bonusPoints.length; i += 1) {
+    if (seal.crashWith(bonusPoints[i])) {
+      didYouGrab = true;
+      index = i;
+    }
+  }
+
+  if (didYouGrab) {
+    gameArea.scoreBonus();
+    bonusPoints.splice(index, 1);
+  }
+};
 
 const updateGameArea = () => {
   gameArea.clear();
@@ -201,7 +305,18 @@ const updateGameArea = () => {
   seal.updatePlayer();
   updateObstacles();
   updateObstacles2();
+  fishes();
+  gameArea.score();
+  checkBonusPoints();
+  checkGameOver();
 };
+
+// Start and restart buttom
+// document.getElementById('btn').onclick = () => {
+//   gameArea.stop();
+//   gameArea.clear();
+//   gameArea.start();
+// };
 
 const startGame = () => {
   gameArea.start();
