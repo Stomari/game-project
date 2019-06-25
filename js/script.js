@@ -1,3 +1,5 @@
+let themeSong = new Audio('sounds/seal-kiss-from-a-rose.mp3');
+
 const gameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
@@ -96,6 +98,8 @@ const controller = {
           resetGame();
           gameArea.start();
           controller.enter = true;
+          themeSong.load();
+          themeSong.play();
           break;
         }
     }
@@ -205,12 +209,13 @@ function checkGameOver() {
       gameArea.ctx.drawImage(gameOverImg, 0, 0, 1000, 600);
       gameArea.ctx.font = '100px Architects Daughter';
       gameArea.ctx.fillStyle = 'black';
-      gameArea.ctx.fillText(`GAME OVER`, 200, 200);
+      gameArea.ctx.fillText('GAME OVER', 200, 200);
       gameArea.ctx.fillText(`Score: ${gameArea.points}`, 270, 400);
       gameArea.ctx.font = '40px Architects Daughter';
       gameArea.ctx.fillText('PRESS ENTER TO RESTART', 200, 500);
     }, 2000);
     controller.enter = false;
+    themeSong.pause();
   }
 }
 
@@ -316,6 +321,7 @@ const checkBonusPoints = () => {
     bonusPoints.splice(index, 1);
   }
 };
+
 
 const updateGameArea = () => {
   gameArea.clear();
