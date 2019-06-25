@@ -1,21 +1,29 @@
+let themeSong = new Audio('sounds/seal-kiss-from-a-rose.mp3');
+
 const gameArea = {
   canvas: document.createElement('canvas'),
   frames: 0,
   points: 0,
-  start() {
+  menu() {
     this.canvas.width = 1000;
     this.canvas.height = 600;
     this.ctx = this.canvas.getContext('2d');
-    const game = document.getElementById('game')
+    const game = document.getElementById('game');
     game.insertBefore(this.canvas, game.childNodes[0]);
+    window.onload = () => {
+      const menuImg = document.getElementById('menu');
+      this.ctx.drawImage(menuImg, 0, 0, 1000, 600);
+      const menuLogo = document.getElementById('logo');
+      this.ctx.drawImage(menuLogo, 150, 300, 700, 200);
+      this.ctx.font = '30px Architects Daughter';
+      this.ctx.fillStyle = 'black';
+      this.ctx.fillText('PRESS ENTER TO START', 320, 500);
+    };
+  },
+  start() {
     this.interval = setInterval(updateGameArea, 1000 / 60);
   },
   drawBoard() {
-    // const img = new Image();
-    // img.src = './images/glacial_mountains_fullcolor_preview.png';
-    // img.onload = () => {
-    //   this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-    // };
     this.ctx.beginPath();
     const grd = this.ctx.createLinearGradient(0, 600, 0, 500);
     grd.addColorStop(0, '#20C3D0');
@@ -42,7 +50,7 @@ const gameArea = {
     this.points += 10;
     this.ctx.font = '30px Architects Daughter';
     this.ctx.fillStyle = 'black';
-    const bonusInterval = setInterval(() => this.ctx.fillText('+10', 460, 80), 1);
+    const bonusInterval = setInterval(() => this.ctx.fillText('+10', 535, 80), 1000 / 60);
     setTimeout(() => clearInterval(bonusInterval), 2000);
   },
 };
@@ -70,6 +78,7 @@ const controller = {
   left: false,
   right: false,
   up: false,
+  enter: false,
   keyListener(event) {
     const keyState = (event.type === 'keydown');
 
@@ -84,6 +93,15 @@ const controller = {
       case 68:// D key - move right
         controller.right = keyState;
         break;
+      case 13:// Enter key
+        if (controller.enter === false) {
+          resetGame();
+          gameArea.start();
+          controller.enter = true;
+          themeSong.load();
+          themeSong.play();
+          break;
+        }
     }
   },
 };
@@ -191,15 +209,19 @@ function checkGameOver() {
       gameArea.ctx.drawImage(gameOverImg, 0, 0, 1000, 600);
       gameArea.ctx.font = '100px Architects Daughter';
       gameArea.ctx.fillStyle = 'black';
-      gameArea.ctx.fillText(`GAME OVER`, 200, 200);
+      gameArea.ctx.fillText('GAME OVER', 200, 200);
       gameArea.ctx.fillText(`Score: ${gameArea.points}`, 270, 400);
+      gameArea.ctx.font = '40px Architects Daughter';
+      gameArea.ctx.fillText('PRESS ENTER TO RESTART', 200, 500);
     }, 2000);
+    controller.enter = false;
+    themeSong.pause();
   }
 }
 
 const seal = new Player(20, 470, 60, 30);
 
-const myObstacles = [];
+let myObstacles = [];
 
 function updateObstacles() {
   for (let i = 0; i < myObstacles.length; i += 1) {
@@ -212,7 +234,7 @@ function updateObstacles() {
   }
 }
 
-const myObstacles2 = [];
+let myObstacles2 = [];
 
 function updateObstacles2() {
   if (myObstacles2.length >= 1) {
@@ -235,6 +257,11 @@ function updateObstacles2() {
 
 // Bonus points logic
 class Fish extends Player {
+  constructor(x, y, width, height) {
+    super(x, y, width, height);
+    this.speedX = -Math.round(Math.random() * 5);
+  }
+
   update() {
     const fish = document.getElementById('fish');
     gameArea.ctx.drawImage(fish, this.x, this.y, this.width, this.height);
@@ -243,7 +270,6 @@ class Fish extends Player {
   newPos() {
     this.x += this.speedX;
     this.y += this.speedY;
-    this.speedX = -Math.round(Math.random() * 5);
     if (this.y === 50) {
       this.speedY = 4;
     } else if (this.y === 450) {
@@ -268,7 +294,7 @@ class Fish extends Player {
   }
 }
 
-const bonusPoints = [];
+let bonusPoints = [];
 
 const fishes = () => {
   for (let i = 0; i < bonusPoints.length; i += 1) {
@@ -296,6 +322,7 @@ const checkBonusPoints = () => {
   }
 };
 
+
 const updateGameArea = () => {
   gameArea.clear();
   backgroundImage.draw();
@@ -311,15 +338,15 @@ const updateGameArea = () => {
   checkGameOver();
 };
 
-// Start and restart buttom
-// document.getElementById('btn').onclick = () => {
-//   gameArea.stop();
-//   gameArea.clear();
-//   gameArea.start();
-// };
-
-const startGame = () => {
-  gameArea.start();
+const resetGame = () => {
+  gameArea.frames = 0;
+  gameArea.points = 0;
+  backgroundImage.x = 0;
+  seal.x = 20;
+  seal.y = 470;
+  myObstacles = [];
+  myObstacles2 = [];
+  bonusPoints = [];
 };
 
-startGame();
+gameArea.menu();

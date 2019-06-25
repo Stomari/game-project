@@ -4,15 +4,7 @@ body {
     font-family: 'Architects Daughter';
     font-weight: bold;
     font-size: 25px;
-}
-
-#title {
-    display: flex;
-    justify-content: center;
-    font-family: 'Architects Daughter';
-    font-size: 100px;
-    font-weight: bolder;
-    margin: 0;
+    text-align: center;
 }
 
 #game {
@@ -25,22 +17,6 @@ body {
     justify-content: space-evenly;
 }
 
-#btn {
-    background-color: rgb(84, 116, 177);
-    border: 5px dashed black;
-    padding: 10px;
-    text-align: center;
-    font-size: 20px;
-    border-radius: 50%;
-    font-family: 'Architects Daughter';
+canvas {
+    margin-top: 100px;
 }
-
-#btn:hover {
-    background-color: rgb(142, 190, 252); 
-  }
-
-
-
-/* canvas {
-    border: 5px solid red;
-} */
