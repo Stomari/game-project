@@ -13,6 +13,7 @@ body {
 }
 
 #menu {
+    margin: 0 10%;
     display: flex;
     justify-content: space-evenly;
 }
