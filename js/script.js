@@ -250,7 +250,7 @@ function updateObstacles2() {
       myObstacles2[i].updateEnemy2();
     }
   }
-  if (gameArea.frames % Math.round(Math.random() * 1000) === 0) {
+  if (gameArea.frames % Math.round(Math.random() * 1500) === 0) {
     myObstacles2.push(new Player(900, 600, 100, 40));
   }
 }
