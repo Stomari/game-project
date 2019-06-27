@@ -1,4 +1,7 @@
 const themeSong = new Audio('sounds/seal-kiss-from-a-rose.mp3');
+const jumpAudio = new Audio('sounds/little_robot_sound_factory_Jump_00.mp3');
+jumpAudio.volume = 0.2;
+const youLose = new Audio('sounds/zapsplat_multimedia_male_voice_processed_says_you_lose_21571.mp3');
 let highScore = 0;
 
 const gameArea = {
@@ -98,6 +101,7 @@ function checkGameOver() {
       gameArea.ctx.fillStyle = 'red';
       gameArea.ctx.fillText(`${highScore}`, 650, 100);
       controller.enter = false;
+      youLose.play();
     }, 2000);
     themeSong.pause();
   }

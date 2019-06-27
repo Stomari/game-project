@@ -18,6 +18,7 @@ class Player {
     if (controller.up && this.jumping === false) {
       this.speedY -= 40;
       this.jumping = true;
+      jumpAudio.play();
     }
     if (controller.left) {
       this.speedX -= 3.5;
