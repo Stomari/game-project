@@ -5,5 +5,5 @@
  <p>The game was made with Canvas in JS and the images of the elements and the background were found on Google and itch.io, respectvely.</p>
  <p>My biggest difficulties in the execution of this game was the implementation of jump mechanics and its variables, like adding gravity and friction simulations, adding collision to the obstacles, and arranging correctly the methods created for my objects.</p>
  <br>
- <p>To test my game you need only to acess the link to the GitHub Page below, or download the repository and execute the index.html file on the browser.</p>
+ <p>To test my game you only need to acess the link to the GitHub Page below, or download the repository and execute the index.html file on the browser.</p>
  <p>Game link: https://stomari.github.io/game-project/</p>
