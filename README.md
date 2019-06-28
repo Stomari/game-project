@@ -1,4 +1,4 @@
-  Meu primeiro projeto utilizando JS para fazer um game!
+  <h1>Meu primeiro projeto utilizando JS para fazer um game!</h1>
 
   Nesse projeto utilizei o JavaScript para montar um Runner, cujo o principal objetivo é sobreviver e se desafiar a conseguir pontuaçoes cada vez maiores. Para tal fim, utilizei classes e objetos no JS para montar meu personagem jogável com mecânicas de movimento e pulo, e meus obstáculos com diferentes tipos de movimentaçao para tornar o jogo desafiador. 
  A pontuaçao é feita com base na somatória de tempo em que você consegue ficar vivo e pegando os peixes que incrementam sua pontuaçao em 10 pontos.
